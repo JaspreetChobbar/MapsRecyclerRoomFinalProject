@@ -2,6 +2,7 @@ package yoyo.jassie.finaltest.ui.list;
 
 import android.content.Context;
 import android.content.Intent;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.TasksV
     private List<Bookmark> taskList;
     private List<Bookmark> filteredtaskList;
 
-    private boolean noResults = false;
+    private boolean noResults = true;
 
     public RecyclerAdapter(Context mCtx, List<Bookmark> taskList) {
         this.mCtx = mCtx;
@@ -39,7 +40,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.TasksV
 
     @Override
     public TasksViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mCtx).inflate(R.layout.recycler_view, parent, false);
+        View view ;
+        if (viewType == 0) {
+            view = LayoutInflater.from(mCtx).inflate(R.layout.recycler_view_empty, parent, false);
+        } else {
+            view = LayoutInflater.from(mCtx).inflate(R.layout.recycler_view, parent, false);
+        }
+
         return new TasksViewHolder(view);
     }
 
@@ -47,25 +54,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.TasksV
     public void onBindViewHolder(TasksViewHolder holder, int position) {
 
         if(noResults){
-            holder.textViewNameRV.setText("No results found...");
-            holder.textViewCountryRV.setVisibility(View.GONE);
-
-            holder.textViewGenderRV.setVisibility(View.GONE);
-            holder.textViewLatitudeRV.setVisibility(View.GONE);
-            holder.textViewLongitudeRV.setVisibility(View.GONE);
-            holder.textViewBirthdayRV.setVisibility(View.GONE);
-            holder.imageView.setVisibility(View.GONE);
-
             return;
-        }else{
-            holder.textViewCountryRV.setVisibility(View.VISIBLE);
-
-            holder.textViewGenderRV.setVisibility(View.VISIBLE);
-            holder.textViewLatitudeRV.setVisibility(View.VISIBLE);
-            holder.textViewLongitudeRV.setVisibility(View.VISIBLE);
-            holder.textViewBirthdayRV.setVisibility(View.VISIBLE);
-            holder.imageView.setVisibility(View.VISIBLE);
-
         }
 
         Bookmark t = filteredtaskList.get(position);
@@ -84,6 +73,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.TasksV
 
         holder.imageView.setImageBitmap(t.getImage(mCtx));
 
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        if(noResults){
+            return 0;
+        }else{
+            return 1;
+        }
     }
 
     @Override
@@ -145,6 +144,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.TasksV
         public TasksViewHolder(View itemView) {
             super(itemView);
 
+            if(noResults){
+                return;
+            }
+
             textViewNameRV = itemView.findViewById(R.id.textViewNameRecycler);
             textViewCountryRV = itemView.findViewById(R.id.textViewCountryRecycler);
             textViewGenderRV = itemView.findViewById(R.id.textViewGenderRecycler);
@@ -161,6 +164,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.TasksV
             if(noResults){
                 return;
             }
+
             Bookmark task = filteredtaskList.get(getAdapterPosition());
 
             Intent intent = new Intent(mCtx, DetailsActivity.class);
