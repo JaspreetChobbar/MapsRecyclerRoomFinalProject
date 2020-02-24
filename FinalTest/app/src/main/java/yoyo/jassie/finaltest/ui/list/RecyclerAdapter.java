@@ -158,6 +158,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.TasksV
 
         @Override
         public void onClick(View view) {
+            if(noResults){
+                return;
+            }
             Bookmark task = filteredtaskList.get(getAdapterPosition());
 
             Intent intent = new Intent(mCtx, DetailsActivity.class);
